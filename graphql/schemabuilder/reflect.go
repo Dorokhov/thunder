@@ -68,6 +68,12 @@ func reverseGraphqlFieldName(s string) string {
 	return b.String()
 }
 
+// AddParser adds custom type parser, should be invoked before SchemaBuild
+func AddParser(typ reflect.Type, parser func(value interface{}, dest reflect.Value) error, key string) {
+	scalarArgParsers[typ] = &argParser{FromJSON: parser, Type: typ}
+	scalars[typ] = key
+}
+
 var scalarArgParsers = map[reflect.Type]*argParser{
 	reflect.TypeOf(bool(false)): {
 		FromJSON: func(value interface{}, dest reflect.Value) error {
@@ -1024,8 +1030,10 @@ func (sb *schemaBuilder) getType(t reflect.Type) (graphql.Type, error) {
 	}
 
 	if typ, ok := getScalar(t); ok {
+		fmt.Println("SCALAR", t)
 		return &graphql.NonNull{Type: &graphql.Scalar{Type: typ}}, nil
 	}
+	fmt.Println("NOT SCALAR", t)
 	if t.Kind() == reflect.Ptr {
 		if typ, ok := getScalar(t.Elem()); ok {
 			return &graphql.Scalar{Type: typ}, nil // XXX: prefix typ with "*"
