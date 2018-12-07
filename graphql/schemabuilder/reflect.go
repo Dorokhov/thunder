@@ -1030,10 +1030,8 @@ func (sb *schemaBuilder) getType(t reflect.Type) (graphql.Type, error) {
 	}
 
 	if typ, ok := getScalar(t); ok {
-		fmt.Println("SCALAR", t)
 		return &graphql.NonNull{Type: &graphql.Scalar{Type: typ}}, nil
 	}
-	fmt.Println("NOT SCALAR", t)
 	if t.Kind() == reflect.Ptr {
 		if typ, ok := getScalar(t.Elem()); ok {
 			return &graphql.Scalar{Type: typ}, nil // XXX: prefix typ with "*"
