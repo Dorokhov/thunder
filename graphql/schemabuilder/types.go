@@ -53,6 +53,13 @@ func (s SortFields) apply(m *method) {
 	m.SortFuncs = s
 }
 
+type Described string
+
+func (s Described) apply(m *method) {
+	m.Description = string(s)
+
+}
+
 // FieldFunc exposes a field on an object. The function f can take a number of
 // optional arguments:
 // func([ctx context.Context], [o *Type], [args struct {}]) ([Result], [error])
@@ -102,6 +109,7 @@ func (s *Object) Key(f string) {
 type method struct {
 	MarkedNonNullable bool
 	Fn                interface{}
+	Description       string
 
 	// Whether or not the FieldFunc is paginated.
 	Paginated bool

@@ -67,6 +67,7 @@ func (sb *schemaBuilder) buildFunction(typ reflect.Type, m *method) (*graphql.Fi
 			return funcCtx.extractResultAndErr(funcOutputArgs, retType)
 
 		},
+		Description:    m.Description,
 		Args:           args,
 		Type:           retType,
 		ParseArguments: argParser.Parse,
