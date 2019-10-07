@@ -95,9 +95,14 @@ func (sb *schemaBuilder) getType(nodeType reflect.Type) (graphql.Type, error) {
 // encoding.TextMarshaler and convert it's value into a string in the graphQL
 // response.
 func (sb *schemaBuilder) getTextMarshalerType(typ reflect.Type) (graphql.Type, error) {
+	obj := sb.objects[typ]
+	var description string
+	if obj != nil {
+		description = obj.Description
+	}
 	scalar := &graphql.Scalar{
 		Type:        "string",
-		Description: sb.objects[typ].Description,
+		Description: description,
 		Unwrapper: func(source interface{}) (interface{}, error) {
 			i := reflect.ValueOf(source)
 			if i.Kind() == reflect.Ptr && i.IsNil() {

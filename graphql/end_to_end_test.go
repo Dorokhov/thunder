@@ -79,13 +79,9 @@ func TestPathError(t *testing.T) {
 
 	e = graphql.Executor{}
 	_, err = e.Execute(context.Background(), builtSchema.Query, nil, q)
-	if err == nil || err.Error() != "safe safe" {
+	if err == nil || err.Error() != "safe: safe safe" {
 		t.Errorf("bad error: %v", err)
 	}
-	if _, ok := err.(graphql.SanitizedError); !ok {
-		t.Errorf("safe not safe")
-	}
-
 }
 
 func TestEnum(t *testing.T) {

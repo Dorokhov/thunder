@@ -24,7 +24,8 @@ func testHTTPRequest(req *http.Request) *httptest.ResponseRecorder {
 	builtSchema := schema.MustBuild()
 
 	rr := httptest.NewRecorder()
-	handler := graphql.HTTPHandler(builtSchema)
+	finalHandler := func(responseLength int, errors []error, query *string) {}
+	handler := graphql.HTTPHandlerWithHooks(builtSchema, finalHandler)
 
 	handler.ServeHTTP(rr, req)
 	return rr

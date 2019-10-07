@@ -3,6 +3,7 @@ package graphql
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 // Type represents a GraphQL type, and should be either an Object, a Scalar,
@@ -181,6 +182,33 @@ type Selection struct {
 	// The parsed flag is used to make sure the args for this Selection are only
 	// parsed once.
 	parsed bool
+}
+
+// MetaFieldType a type of meta fields
+type MetaFieldType int32
+
+const (
+	// NotMetaField is regular field, which has name without "__" prefix
+	NotMetaField MetaFieldType = iota
+	// MetaFieldOther a field with "__" prefix
+	MetaFieldOther
+	// MetaFieldTypeName is stands for "__typename"
+	MetaFieldTypeName
+)
+
+// MetaFieldType returns type of meta field (assume all fields with names which
+// starts with "__" are meta fields), i.e. "__typename" will result with
+// MetaFieldTypeName
+func (selection Selection) MetaFieldType() MetaFieldType {
+	switch selection.Name {
+	case "__typename":
+		return MetaFieldTypeName
+	default:
+		if strings.HasPrefix(selection.Name, "__") {
+			return MetaFieldOther
+		}
+		return NotMetaField
+	}
 }
 
 // A Fragment represents a reusable part of a GraphQL query

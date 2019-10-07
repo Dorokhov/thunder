@@ -166,7 +166,7 @@ func PrepareQuery(typ Type, selectionSet *SelectionSet) error {
 			}
 		}
 		for _, selection := range selectionSet.Selections {
-			if selection.Name == "__typename" {
+			if selection.MetaFieldType() == MetaFieldTypeName {
 				if !isNilArgs(selection.Args) {
 					return NewClientError(`error parsing args for "__typename": no args expected`)
 				}
@@ -183,7 +183,7 @@ func PrepareQuery(typ Type, selectionSet *SelectionSet) error {
 			return NewClientError("object field must have selections")
 		}
 		for _, selection := range selectionSet.Selections {
-			if selection.Name == "__typename" {
+			if selection.MetaFieldType() == MetaFieldTypeName {
 				if !isNilArgs(selection.Args) {
 					return NewClientError(`error parsing args for "__typename": no args expected`)
 				}
@@ -315,7 +315,7 @@ func (e *Executor) executeUnion(ctx context.Context, typ *Union, source interfac
 
 	fields := make(map[string]interface{})
 	for _, selection := range selectionSet.Selections {
-		if selection.Name == "__typename" {
+		if selection.MetaFieldType() == MetaFieldTypeName {
 			fields[selection.Alias] = typ.Name
 			continue
 		}
@@ -370,7 +370,7 @@ func (e *Executor) executeObject(ctx context.Context, typ *Object, source interf
 
 	// for every selection, resolve the value and store it in the output object
 	for _, selection := range selections {
-		if selection.Name == "__typename" {
+		if selection.MetaFieldType() == MetaFieldTypeName {
 			fields[selection.Alias] = typ.Name
 			continue
 		}

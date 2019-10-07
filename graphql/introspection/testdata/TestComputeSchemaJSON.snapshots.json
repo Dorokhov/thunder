@@ -867,7 +867,7 @@
               "possibleTypes": []
             },
             {
-              "description": "",
+              "description": "Scalar type bool",
               "enumValues": [],
               "fields": [],
               "inputFields": [],
@@ -906,7 +906,7 @@
               "possibleTypes": []
             },
             {
-              "description": "",
+              "description": "Scalar type int64",
               "enumValues": [],
               "fields": [],
               "inputFields": [],
@@ -916,7 +916,7 @@
               "possibleTypes": []
             },
             {
-              "description": "",
+              "description": "Scalar type string",
               "enumValues": [],
               "fields": [],
               "inputFields": [],
