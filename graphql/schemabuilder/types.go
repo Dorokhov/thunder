@@ -60,6 +60,14 @@ func (s Described) apply(m *method) {
 
 }
 
+type CostFunc struct {
+	Fn interface{}
+}
+
+func (s CostFunc) apply(m *method) {
+	m.CostFunc = s.Fn
+}
+
 // FieldFunc exposes a field on an object. The function f can take a number of
 // optional arguments:
 // func([ctx context.Context], [o *Type], [args struct {}]) ([Result], [error])
@@ -110,6 +118,7 @@ type method struct {
 	MarkedNonNullable bool
 	Fn                interface{}
 	Description       string
+	CostFunc          interface{}
 
 	// Whether or not the FieldFunc is paginated.
 	Paginated bool

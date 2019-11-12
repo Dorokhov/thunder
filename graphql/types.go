@@ -121,12 +121,17 @@ var _ Type = &Union{}
 // A Resolver calculates the value of a field of an object
 type Resolver func(ctx context.Context, source, args interface{}, selectionSet *SelectionSet) (interface{}, error)
 
+// Estimator is a function that estimates cost of resolving things. Returns the
+// cost, a boolean for whether the recursive descend is needed, and the error.
+type Estimator func(ctx context.Context, source, args interface{}, selectionSet *SelectionSet) (uint64, bool, error)
+
 // Field knows how to compute field values of an Object
 //
 // Fields are responsible for computing their value themselves.
 type Field struct {
 	Description    string
 	Resolve        Resolver
+	Estimate       Estimator
 	Type           Type
 	Args           map[string]Type
 	ParseArguments func(json interface{}) (interface{}, error)

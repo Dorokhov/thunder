@@ -8,6 +8,20 @@ import (
 	"github.com/samsarahq/thunder/graphql"
 )
 
+func convertFunc(dst, src interface{}) error {
+	dv := reflect.ValueOf(dst).Elem()
+	sv := reflect.ValueOf(src)
+
+	dt := dv.Type()
+	st := sv.Type()
+
+	if !sv.Type().ConvertibleTo(dt) {
+		return fmt.Errorf("cannot convert %s to %s", st, dt)
+	}
+	dv.Set(sv.Convert(dt))
+	return nil
+}
+
 // buildFunction takes the reflect type of an object and a method attached to
 // that object to build a GraphQL Field that can be resolved in the GraphQL
 // graph.
@@ -56,6 +70,13 @@ func (sb *schemaBuilder) buildFunction(typ reflect.Type, m *method) (*graphql.Fi
 		return nil, err
 	}
 
+	var estimator graphql.Estimator
+	if m.CostFunc != nil {
+		if err := convertFunc(&estimator, m.CostFunc); err != nil {
+			return nil, err
+		}
+	}
+
 	return &graphql.Field{
 		Resolve: func(ctx context.Context, source, funcRawArgs interface{}, selectionSet *graphql.SelectionSet) (interface{}, error) {
 			// Set up function arguments.
@@ -67,6 +88,7 @@ func (sb *schemaBuilder) buildFunction(typ reflect.Type, m *method) (*graphql.Fi
 			return funcCtx.extractResultAndErr(funcOutputArgs, retType)
 
 		},
+		Estimate:       estimator,
 		Description:    m.Description,
 		Args:           args,
 		Type:           retType,
