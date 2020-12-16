@@ -138,23 +138,23 @@ func (h *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			output.Current, output.Error = e.Execute(input.Ctx, schema, nil, input.ParsedQuery)
 			return output
 		})
-
-		output := RunMiddlewares(middlewares, &ComputationInput{
+		input := &ComputationInput{
 			Ctx:         ctx,
 			ParsedQuery: query,
 			Query:       params.Query,
 			Variables:   params.Variables,
-		})
+		}
+		output := RunMiddlewares(middlewares, input)
 		current, err := output.Current, output.Error
 
 		if err != nil {
 			if ErrorCause(err) != context.Canceled {
-				writeResponse(ctx, nil, err, &params.Query)
+				writeResponse(input.Ctx, nil, err, &params.Query)
 			}
 			return nil, err
 		}
 
-		writeResponse(ctx, current, nil, nil)
+		writeResponse(input.Ctx, current, nil, nil)
 		return nil, nil
 	}, DefaultMinRerunInterval)
 

@@ -117,6 +117,11 @@ func (e ClientError) SanitizedError() string {
 	return e.message
 }
 
+// Code returns meta data about occurred client error
+func (e ClientError) Code() string {
+	return e.code
+}
+
 func (e SafeError) Error() string {
 	return e.message
 }
